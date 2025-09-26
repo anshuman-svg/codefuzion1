@@ -157,15 +157,18 @@
 				}
 				#chatbot-window {
 				width: 320px;
-				background: rgba(255,255,255,0.98);
+				background: rgba(93, 87, 81, 0.98);
 				border-radius: 16px;
 				box-shadow: 0 8px 32px rgba(0,0,0,0.18);
 				position: absolute;
 				left: 0;
 				bottom: 72px;
-				display: none;
+				display: flex;
 				flex-direction: column;
 				overflow: hidden;
+
+				height: 400px; /* Give the total window a fixed height for a clean look */
+    max-height: 80vh;
 				}
 				#chatbot-header {
 				background: #1845ad;
@@ -185,8 +188,14 @@
 				}
 				#chatbot-body {
 				padding: 16px;
+				flex: 1;
+				padding: 16px;
+    
+    /* The rest of your styles */
+    display: flex;
+    flex-direction: column;
 				min-height: 80px;
-				max-height: 180px;
+				max-height: 100%;
 				overflow-y: auto;
 				color: #222;
 				font-size: 15px;
@@ -195,7 +204,7 @@
 				display: flex;
 				border-top: 1px solid #eee;
 				padding: 10px;
-				background: #f7f7fa;
+				background: rgba(93, 87, 81, 0.98);
 				}
 				#chatbot-input {
 				flex: 1;
@@ -204,7 +213,7 @@
 				padding: 8px 12px;
 				font-size: 15px;
 				margin-right: 8px;
-				background: #eef0f4;
+				background: rgba(93, 87, 81, 0.98);
 				color: #222;
 				}
 				#chatbot-send {
@@ -216,6 +225,54 @@
 				font-size: 18px;
 				cursor: pointer;
 				}
+				#chatbot-body .chat-message {
+    padding: 10px 14px;
+    border-radius: 18px; /* Rounded corners */
+    margin: 8px 0;
+    max-width: 85%;
+    line-height: 1.4;
+    font-size: 14px;
+    /* Use a fixed border for all messages */
+    border: 1px solid transparent; 
+}
+
+/* User Messages (Commands) - Align Right */
+#chatbot-body .user {
+    /* Alignment */
+    align-self: flex-end; /* Pushes the message to the right */
+    
+    /* Styling */
+    background: #1845ad; /* Your blue color */
+    color: #fff;
+    /* Special border radius for the corner near the sender */
+    border-bottom-right-radius: 4px; 
+    
+    /* Clearer border */
+    border-color: #1845ad; 
+}
+
+/* Bot Messages (Responses) - Align Left */
+#chatbot-body .bot {
+    /* Alignment */
+    align-self: flex-start; /* Pushes the message to the left */
+    
+    /* Styling */
+    background: #f1f0f4; /* Light gray background */
+    color: #222;
+    /* Special border radius for the corner near the sender */
+    border-bottom-left-radius: 4px;
+    
+    /* Clearer border */
+    border-color: #ddd; /* Light border for the bot */
+}
+
+/* Typing Indicator (Left aligned, muted style) */
+#chatbot-body .bot.typing {
+    background: #f0f0f0;
+    font-style: italic;
+    color: #777;
+    border-color: #ddd;
+}
 
 		</style>
 		<!-- End FOR DEMO SITE ONLY!!! -->
@@ -738,7 +795,7 @@
 				<span>Chatbot</span>
 				<button onclick="toggleChatbot()" id="chatbot-close">&times;</button>
 				</div>
-				<div id="chatbot-body">
+				<div id="chatbot-body" data-lenis-prevent>
 				<p>Hello! How can I help you?</p>
 				<!-- You can add your chatbot integration here -->
 				</div>
@@ -817,23 +874,173 @@
 			});
 
 
-			function toggleChatbot() {
-				var win = document.getElementById('chatbot-window');
-				win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
-				}
-				document.getElementById('chatbot-send').onclick = function() {
-				var input = document.getElementById('chatbot-input');
-				var body = document.getElementById('chatbot-body');
-				if(input.value.trim()) {
-					var msg = document.createElement('div');
-					msg.textContent = input.value;
-					msg.style.margin = '8px 0';
-					msg.style.textAlign = 'right';
-					body.appendChild(msg);
-					input.value = '';
-					body.scrollTop = body.scrollHeight;
-				}
-				};
+			// function toggleChatbot() {
+			// 	var win = document.getElementById('chatbot-window');
+			// 	win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
+			// 	}
+			// 	document.getElementById('chatbot-send').onclick = function() {
+			// 	var input = document.getElementById('chatbot-input');
+			// 	var body = document.getElementById('chatbot-body');
+			// 	if(userMsg) {
+        	// 		// Show user message
+			// 		var msg = document.createElement('div');
+			// 		msg.textContent = userMsg;
+			// 		msg.style.margin = '8px 0';
+			// 		msg.style.textAlign = 'right';
+			// 		body.appendChild(msg);
+			// 		input.value = '';
+			// 		body.scrollTop = body.scrollHeight;
+
+			// 		// Simple demo responses
+			// 		var botReply = document.createElement('div');
+			// 		botReply.style.margin = '8px 0';
+			// 		botReply.style.textAlign = 'left';
+			// 		if(userMsg.toLowerCase().includes('hello')) {
+			// 			botReply.textContent = "Hi there! How can I help you today?";
+			// 		} else if(userMsg.toLowerCase().includes('services')) {
+			// 			botReply.textContent = "We offer web development, design, and AI solutions. Want to know more?";
+			// 		} else if(userMsg.toLowerCase().includes('contact')) {
+			// 			botReply.textContent = "You can contact us via the Contact page or email company@email.com.";
+			// 		} else {
+			// 			botReply.textContent = "Sorry, I'm a demo bot. Please ask about our services or contact info!";
+			// 		}
+			// 		body.appendChild(botReply);
+			// 		body.scrollTop = body.scrollHeight;
+			// 	}
+			// 	};
+			const GEMINI_API_KEY = "geminiapi"; // <-- REPLACE WITH YOUR ACTUAL KEY
+    const GEMINI_MODEL = "gemini-2.5-flash"; // A fast and capable model
+
+    // Simple history for the chat session (important for conversational context)
+    let chatHistory = [];
+
+    // Toggles the visibility of the chatbot window
+    function toggleChatbot() {
+        const win = document.getElementById('chatbot-window');
+        win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
+        // Auto-focus on the input when opened
+        if (win.style.display === 'flex') {
+            document.getElementById('chatbot-input').focus();
+        }
+    }
+
+    // Function to add a new message to the chat body
+    function appendMessage(sender, text) {
+        const body = document.getElementById('chatbot-body');
+        const msgContainer = document.createElement('div');
+        msgContainer.className = `chat-message ${sender}`; // Add a class for styling (see CSS below)
+        msgContainer.innerHTML = text.replace(/\n/g, '<br>'); // Preserve newlines
+        body.appendChild(msgContainer);
+        body.scrollTop = body.scrollHeight; // Auto-scroll to the bottom
+        return msgContainer; // Return the new element
+    }
+
+    // Function to send the message to the Gemini API
+    async function sendMessage() {
+        const inputElement = document.getElementById('chatbot-input');
+        const userMessage = inputElement.value.trim();
+		const normalizedMessage = userMessage.toLowerCase(); // For case-insensitive matching
+
+        if (userMessage === "") return; // Don't send empty messages
+
+        // 1. Clear input and display user message
+        inputElement.value = '';
+        appendMessage('user', userMessage);
+
+		// --- Custom Command Logic START ---
+        let handledByCommand = false;
+        let botResponse = '';
+
+        if (normalizedMessage.includes('/services')) {
+            botResponse = "We offer a range of services including **Web Development**, **Modern UI/UX Design**, and **AI Integration** (like me!). Would you like a consultation?";
+            handledByCommand = true;
+        } 
+        else if (normalizedMessage.includes('/contact')) {
+            botResponse = "You can contact our team directly at info@codefuzion.tech or visit our Contact page for a full form: codefuzion.tech/contact";
+            handledByCommand = true;
+        }
+        else if (normalizedMessage.includes('/help')) {
+            botResponse = "Try typing a command like `/services`, `/contact`, `/process`, or ask any general question!";
+            handledByCommand = true;
+        }
+		else if (normalizedMessage.includes('/stack')) {
+        botResponse = "We specialize in the modern web stack: \n- Frontend: HTML5, CSS3, JavaScript (React/Vue)\n- Backend: Node.js, Python, and robust database solutions.";
+        handledByCommand = true;
+    }
+    else if (normalizedMessage.includes('/process')) {
+        botResponse = "Our simple 5-step process:\n1. Strategy\n2. Design\n3. Development\n4. Testing\n5. Support & Launch.";
+        handledByCommand = true;
+    }
+    else if (normalizedMessage.includes('/hours')) {
+        botResponse = "Our business hours are **Monday - Friday, 9:00 AM to 6:00 PM IST**. We typically reply to queries within 2 hours.";
+        handledByCommand = true;
+    }
+    else if (normalizedMessage.includes('/social')) {
+        botResponse = "You can find us on: \n- Facebook\n- Instagram\n- LinkedIn\n\nSearch for 'CodeFuzion.tech'!";
+        handledByCommand = true;
+    }
+        
+        // If a command was matched, display the static response immediately
+        if (handledByCommand) {
+            // Display the static response and stop here
+            appendMessage('bot', botResponse);
+            return; // EXIT the function, do NOT call the Gemini API
+        }
+        // --- Custom Command Logic END ---
+
+        // 2. Add user message to history
+        chatHistory.push({ role: "user", parts: [{ text: userMessage }] });
+
+        // 3. Display a "typing" indicator
+        const typingIndicator = appendMessage('bot typing', '...'); 
+        
+        try {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    contents: chatHistory, // Send the full history for context
+                }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`API Error: ${response.status} - ${errorData.error.message}`);
+            }
+
+            const data = await response.json();
+            const botResponse = data.candidates[0].content.parts[0].text;
+
+            // 4. Remove typing indicator and display bot response
+            typingIndicator.remove();
+            appendMessage('bot', botResponse);
+
+            // 5. Add bot response to history for next turn
+            chatHistory.push({ role: "model", parts: [{ text: botResponse }] });
+
+        } catch (error) {
+            console.error('Gemini API call failed:', error);
+            typingIndicator.remove();
+            appendMessage('error', '🤖 Oops! I hit an error. Check the console and ensure your API key is correct.');
+            // Remove the last user message from history so it doesn't mess up next turn
+            chatHistory.pop(); 
+        }
+    }
+
+		// --- Event Listeners ---
+		document.getElementById('chatbot-send').addEventListener('click', sendMessage);
+
+		// Allow sending on Enter key press
+		document.getElementById('chatbot-input').addEventListener('keypress', function(e) {
+			if (e.key === 'Enter') {
+				sendMessage();
+			}
+		});
+
+		// Make toggleChatbot available globally
+		window.toggleChatbot = toggleChatbot;
 
 		</script>
 		<!-- End FOR DEMO SITE ONLY!!! -->
